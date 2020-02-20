@@ -1,0 +1,8 @@
+#!/bin/bash
+# Initialize gstreamer with specified UVC capture device
+
+dev=${1:-/dev/video0}
+
+gst-launch-1.0 -v v4l2src device=$dev do-timestamp=true ! \
+'image/jpeg, width=1920, height=1080, framerate=30/1' ! \
+jpegparse ! jpegdec ! videoconvert ! xvimagesink sync=false

@@ -1,0 +1,4 @@
+#!/bin/bash
+# List all video capture devices, returning only the first location for each device
+
+v4l2-ctl --list-devices | grep -vP "/dev/\w+" -A 1 | grep -oP "/dev/\w+"
