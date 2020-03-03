@@ -1,0 +1,14 @@
+#!/bin/bash
+# Get USB device ID from v4l2/UVC ID
+
+UVA=${1:-video0}
+
+# Get USB bus and device numbers
+UDEV=$(udevadm info -n $UVA -q path)
+BUS=$(echo $UDEV | grep -oP "(?<=/usb\d/)\d(?=-\d/)")
+DEV=$(echo $UDEV | grep -oP "(?<=/usb\d/\d-)\d(?=/)")
+
+# Get hexadecimal device ID
+LOC=$(printf "Bus %03d Device %03d: ID " $BUS $DEV)
+USB=$(lsusb | grep -oP "(?<=$LOC)\w{4}:\w{4}")
+echo $USB

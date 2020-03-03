@@ -1,0 +1,29 @@
+#!/usr/bin/python
+# Get device serial number (SN) from v4l2/UVC ID
+
+import argparse
+import re
+import shlex
+import subprocess
+
+parser = argparse.ArgumentParser(
+    description='Get device serial number (SN) from v4l2/UVC ID'
+    )
+parser.add_argument(
+    'dev', action='store',
+    help='name of device whose SN will be found'
+    )
+args = parser.parse_args()
+
+# Check format of device name argument
+if re.match('/dev/video\d+', args.dev):
+    dev = args.dev
+elif re.match('video\d+', args.dev):
+    dev = '/dev/'+args.dev
+else:
+    raise ValueError("Device name format is incorrect; must be [/dev/]video*")
+
+# Run udevadm to get serial number
+cmd = "/bin/udevadm info --name={} | grep -ioP \"(?<=serial_short=sn)\w+\"".format(dev)
+out = subprocess.check_output(cmd, shell=True)[:-1]
+print(out)

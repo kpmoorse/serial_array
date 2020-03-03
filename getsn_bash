@@ -1,0 +1,8 @@
+#!/bin/bash
+# Get USB device ID from v4l2/UVC ID
+
+UVA=${1:-video0}
+
+SN=$(/bin/udevadm info --name=/dev/$UVA | grep -ioP "(?<=serial_short=sn)\w+")
+
+echo $SN
