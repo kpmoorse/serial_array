@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(
     description='Get device serial number (SN) from v4l2/UVC ID'
     )
 parser.add_argument(
-    'dev', action='store',
+    'dev', action='store', default='/dev/video0', nargs='?',
     help='name of device whose SN will be found'
     )
 args = parser.parse_args()
