@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import warnings
 
 # Initialize device-agnostic pipe
 pipe = "v4l2src device={} do-timestamp=true "
@@ -15,13 +16,20 @@ while(True):
     # Capture frame-by-frame
     ret_sum = True
     frame_list = []
+    ret_list = []
     for cap in cap_list:
         ret, frame = cap.read()
+        ret_list.append(ret)
         ret_sum = ret_sum & ret
         frame_list.append(frame)
 
-    if not ret_sum:
-        "Frame capture failed"
+    # Check returns and skip frame if capture failed
+    if not all(ret_list):
+        msg = "Frame capture failed on "
+        for dev, ret in zip(dev_list, ret_list):
+            if not ret:
+                msg += dev+' '
+        warnings.warn(msg)
         continue
 
     disp = np.hstack([cv2.pyrDown(cv2.pyrDown(frame,2)) for frame in frame_list])

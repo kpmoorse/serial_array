@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from time import time
 import csv
+import warnings
 
 
 class Calibrate(object):
@@ -30,12 +31,12 @@ class Calibrate(object):
         while len(objpoints) < n:
             ret, frame = self.cap.read()
             if not ret:
-                print("Frame capture failed")
+                warnings.warn("Frame capture failed")
                 continue
 
             # Preprocess frame for maximal contrast
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            window = self.res[0]//50*2+1
+            window = self.res[0]//30*2+1
             gray = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,\
             cv2.THRESH_BINARY_INV,window,-20)
 
@@ -43,6 +44,7 @@ class Calibrate(object):
             dim = (5,7)
             ret, corners = cv2.findCirclesGrid(gray, dim, None, flags=cv2.CALIB_CB_ASYMMETRIC_GRID)
             
+            # 
             if ret == True:
                 if fl == 0:
                     objpoints.append(objp)
@@ -72,6 +74,7 @@ class Calibrate(object):
             "roi": roi
         }
 
+    # Return washed-out image
     @staticmethod
     def flash(img, I):
         
